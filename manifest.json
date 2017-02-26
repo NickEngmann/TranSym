@@ -1,11 +1,11 @@
 {
 "update_url": "https://clients2.google.com/service/update2/crx",
 
-  "name": "TransOver",
+  "name": "TranSym",
   "manifest_version": 2,
-  "version": "1.37",
+  "version": "1",
   "icons": { "16": "to_16.png", "48": "to_48.png", "128": "to_128.png" },
-  "description": "Hover, click or select to translate (with text-to-speech)",
+  "description": "Hover over words to translate and find synonyms!",
   "background": { "scripts": [
       "lib/jquery-3.1.0.min.js",
       "lib/lodash.min.js",
