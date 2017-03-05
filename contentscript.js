@@ -17,7 +17,7 @@ function whiteList(options) {
 
 function createPopup(nodeType) {
   document.documentElement.appendChild(templates[templateIds[nodeType]]);
-  return $('<'+nodeType+'>');
+  return $('<'+nodeType+ '>');
 }
 
 function removePopup(nodeType) {
@@ -55,7 +55,7 @@ function registerTransoverComponent(component) {
   document.head.appendChild(s);
 }
 
-function showPopup(e, content) {
+function showPopup(e, content, additionalContent) {
   removePopup('transover-type-and-translate-popup');
 
   var $popup = createPopup('transover-popup');
@@ -72,9 +72,56 @@ function showPopup(e, content) {
         $(this.shadowRoot.querySelector('main')).fadeIn('fast');
       })
   });
+  if(obj){
+    console.log(JSON.stringify(obj));
+    content += '<strong>English Synonyms</strong></br>';
+    if(obj.noun){
+      content += "<strong>noun:</strong>";
+      content += addContent(obj.noun.syn);
+      content +=  "</br>";
+    }
+    if(obj.adverb){
+      content += "<strong>adverb:</strong>";
+      content += addContent(obj.adverb.syn);
+      content +=  "</br>";
+    }
+    if(obj.adjective){
+      content += "<strong>adjective:</strong>";
+      content += addContent(obj.adjective.syn);
+      content +=  "</br>";
+    }
+    if(obj.verb){  
+      content += "<strong>verb:</strong>";
+      content += addContent(obj.verb.syn);
+      content +=  "</br>";
+    }
+  }
   $popup.attr('content', content);
 }
+function addContent(newContent){
+    var length = JSON.stringify(newContent).length;
+    // 
+      for (var i = 0; i < length; i++) {
+          if(i == 0){
+            var addedContent = newContent[i] + ", ";
+          } 
+          if (newContent[i] == undefined) { 
+            addedContent = addedContent.slice(0, -2);
+            return addedContent; 
+          }
+          if(i > 0){
+            addedContent += newContent[i] + ", ";
+          }
+          if (i === 4) { 
+            addedContent += newContent[i];
+            return addedContent; 
+          }
+          if (i === 5) { 
+            return addedContent; 
+          }
 
+      }
+}
 function calculatePosition(x, y, $popup) {
   var pos = {};
   var margin = 5;
@@ -297,8 +344,36 @@ chrome.extension.sendRequest({handler: 'get_options'}, function(response) {
               log('skipping empty translation');
               return;
             }
-
-            showPopup(e, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction));
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://words.bighugelabs.com/api/2/0f6bccf6efa7362c1af75df1ee1b1d10/" + word + "/json", false);
+            xhr.send();
+            var result = xhr.responseText;
+            if(result){
+              obj = JSON.parse(result);
+            }
+            else{
+              obj = null;
+            }
+            // if(obj.noun){
+            //   console.log("noun");
+            //   console.log(JSON.stringify(obj.noun.syn));
+            // }
+            // if(obj.adverb){
+            //   console.log("adverb");
+            //   console.log(JSON.stringify(obj.adverb.syn));
+            // }
+            // if(obj.adjective){
+            //   console.log("adjective");
+            //   console.log(JSON.stringify(obj.adjective.syn));
+            // }
+            // if(obj.verb){  
+            //   console.log("verb");
+            //   console.log(JSON.stringify(obj.verb.syn));
+            // }
+  
+            showPopup(e, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction, obj));
+            // console.log(result.verb.syn[0])
+            // console.log(result[0].verb.syn[0]);
         });
       }
     }
@@ -366,7 +441,8 @@ chrome.extension.sendRequest({handler: 'get_options'}, function(response) {
                 }
 
                 var xy = { clientX: last_mouse_stop.x, clientY: last_mouse_stop.y };
-                showPopup(xy, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction));
+                var syn;
+                showPopup(xy, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction, syn));
             });
           }
         }
@@ -494,7 +570,8 @@ window.addEventListener('message', function(e) {
           }
 
           var e = { clientX: $(window).width(), clientY: 0 };
-          showPopup(e, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction));
+          var syn;
+          showPopup(e, TransOver.formatTranslation(translation, TransOverLanguages[response.tl].direction, syn));
       });
     }
 });
