@@ -1,1 +1,8 @@
 *.swp
+
+# Build artifacts
+*.pyc
+__pycache__/
+*.o
+*.so
+.pytest_cache/
