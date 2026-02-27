@@ -1,0 +1,13 @@
+{
+  "name": "transym",
+  "version": "1.0.0",
+  "description": "TranSym - Chrome extension for translation",
+  "main": "background.js",
+  "scripts": {
+    "test": "node test.js",
+    "lint": "node test.js --lint"
+  },
+  "keywords": ["translation", "chrome-extension"],
+  "author": "NickEngmann",
+  "license": "MIT"
+}
