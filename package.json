@@ -1,0 +1,12 @@
+{
+  "name": "transym",
+  "version": "1.0.0",
+  "description": "TranSym Chrome Extension",
+  "main": "background.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
